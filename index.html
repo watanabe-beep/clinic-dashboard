@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>クリニック スタッフカルテ & 実績ダッシュボード</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar: Staff List -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fa-solid fa-square-poll-vertical"></i>
+          <span>TalentHub Clinic</span>
+        </div>
+        <p class="subtitle">人的資本管理・タレント発掘モック</p>
+      </div>
+
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="staff-search" placeholder="名字で検索...">
+      </div>
+
+      <div class="staff-list" id="staff-list-container">
+        <!-- JSで動的に生成 -->
+      </div>
+    </aside>
+
+    <!-- Main Content: Staff Detail -->
+    <main class="main-content">
+      <!-- Welcome Screen (Initial State) -->
+      <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-card">
+          <i class="fa-solid fa-users-gear icon-large"></i>
+          <h2>スタッフカルテ & 人材発掘ダッシュボード</h2>
+          <p>左側のリストからスタッフを選択すると、稼働実績、保有スキルマップ、中長期のキャリア志向、組織貢献ログなどの詳細な人的資本データが表示されます。</p>
+        </div>
+      </div>
+
+      <!-- Staff Detail Card (Hidden by default) -->
+      <div class="detail-container hidden" id="detail-container">
+        <!-- Header -->
+        <header class="detail-header">
+          <div class="profile-summary">
+            <div class="avatar-large" id="detail-avatar">S</div>
+            <div class="profile-info">
+              <div class="name-row">
+                <h1 id="detail-name">佐藤</h1>
+                <span class="badge badge-facility" id="detail-facility">桜木整形外科クリニック</span>
+              </div>
+              <p class="mbti-info" id="detail-mbti"><i class="fa-solid fa-dna"></i> ISFJ (擁護者)</p>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+          <!-- Left Column: Profile details & Skills -->
+          <div class="grid-col-left">
+            <!-- Basic Values & Career Aspirations -->
+            <section class="card profile-card">
+              <h3><i class="fa-solid fa-compass"></i> キャリア志向・思考・目標</h3>
+              
+              <!-- 拡張項目: キャリア志向タグ -->
+              <div class="info-block">
+                <label>キャリア志向 (将来の方向性)</label>
+                <div class="aspiration-tags" id="detail-aspirations">
+                  <!-- JSでバッジを動的生成 -->
+                </div>
+              </div>
+              
+              <div class="info-block">
+                <label>大切にしたい価値観</label>
+                <p id="detail-values">-</p>
+              </div>
+              <div class="info-block">
+                <label>中長期の個人目標</label>
+                <p id="detail-targets">-</p>
+              </div>
+              <div class="info-block">
+                <label>思考・強み</label>
+                <p id="detail-strengths">-</p>
+              </div>
+            </section>
+
+            <!-- 拡張項目: スキル・専門性マトリクス (レーダーチャート) -->
+            <section class="card skills-card">
+              <h3><i class="fa-solid fa-chart-radar"></i> 保有スキル・専門性マップ</h3>
+              <div class="chart-container-radar">
+                <canvas id="skills-chart"></canvas>
+              </div>
+            </section>
+
+            <!-- Academic / Publications -->
+            <section class="card achievements-card">
+              <h3><i class="fa-solid fa-graduation-cap"></i> 学会・論文・外部活動</h3>
+              <ul class="achievement-list" id="detail-achievements">
+                <!-- JSで動的に追加 -->
+              </ul>
+            </section>
+          </div>
+
+          <!-- Right Column: Performance, Condition, Contributions & Interviews -->
+          <div class="grid-col-right">
+            <!-- Performance KPI Metrics -->
+            <section class="card metrics-card">
+              <h3><i class="fa-solid fa-chart-line"></i> 稼働実績 & コンディション</h3>
+              
+              <!-- 拡張項目: コンディション・負荷アラート -->
+              <div class="condition-alert-box" id="detail-condition-box">
+                <div class="condition-item">
+                  <span class="cond-label">モチベーション</span>
+                  <span class="cond-status badge" id="status-motivation">Good</span>
+                </div>
+                <div class="condition-item">
+                  <span class="cond-label">業務負荷感</span>
+                  <span class="cond-status badge" id="status-workload">適正</span>
+                </div>
+              </div>
+
+              <div class="metrics-row">
+                <div class="metric-box">
+                  <span class="metric-label">消化単位数 (当月累計)</span>
+                  <span class="metric-value" id="metric-units">0 <span class="unit">単位</span></span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-label">消化人数 (当月累計)</span>
+                  <span class="metric-value" id="metric-patients">0 <span class="unit">人</span></span>
+                </div>
+              </div>
+              <!-- Performance Chart -->
+              <div class="chart-container">
+                <canvas id="performance-chart"></canvas>
+              </div>
+            </section>
+
+            <!-- 拡張項目: 定性的な組織貢献 -->
+            <section class="card contributions-card">
+              <h3><i class="fa-solid fa-handshake-angle"></i> 定性的な組織貢献</h3>
+              <ul class="contribution-list" id="detail-contributions">
+                <!-- JSで動的に追加 -->
+              </ul>
+            </section>
+
+            <!-- Interview Timeline -->
+            <section class="card timeline-card">
+              <h3><i class="fa-solid fa-comments"></i> 直近の面談記録</h3>
+              <div class="timeline" id="detail-timeline">
+                <!-- JSで動的に追加 -->
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="app.js?v=7"></script>
+</body>
+</html>
